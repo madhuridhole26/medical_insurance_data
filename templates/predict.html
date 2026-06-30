@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predict — MedInsure AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+        body{background:#f8fafc;color:#1e293b;min-height:100vh;}
+
+        nav{display:flex;justify-content:space-between;align-items:center;padding:0 60px;height:68px;background:#fff;border-bottom:1px solid #e2e8f0;position:sticky;top:0;z-index:100;}
+        .nav-brand{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:700;color:#16a34a;text-decoration:none;}
+        .nav-brand span{font-size:1.5rem;}
+        .nav-links{display:flex;align-items:center;gap:8px;}
+        .nav-links a{padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;color:#64748b;transition:all 0.2s;}
+        .nav-links a:hover{background:#f1f5f9;color:#1e293b;}
+        .nav-links .active{color:#16a34a;background:#f0fdf4;}
+        .nav-links .logout{color:#dc2626;cursor:pointer;border:none;background:none;font-size:0.9rem;font-weight:500;padding:8px 16px;border-radius:8px;}
+        .nav-links .logout:hover{background:#fef2f2;}
+
+        .page{max-width:1100px;margin:0 auto;padding:50px 24px;}
+        .page-header{margin-bottom:36px;}
+        .page-header h1{font-size:2rem;font-weight:800;color:#0f172a;}
+        .page-header p{color:#64748b;margin-top:6px;font-size:0.95rem;}
+
+        .predict-layout{display:grid;grid-template-columns:1fr 340px;gap:28px;align-items:start;}
+
+        /* FORM CARD */
+        .form-card{background:#fff;border-radius:20px;padding:40px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.04);}
+        .form-card h3{font-size:1.1rem;font-weight:700;color:#0f172a;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid #f1f5f9;}
+        .grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+        .field{margin-bottom:4px;}
+        label{display:block;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:7px;}
+        input,select{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.93rem;color:#1e293b;outline:none;transition:border 0.2s;background:#fff;appearance:none;}
+        input:focus,select:focus{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,0.1);}
+        .select-wrap{position:relative;}
+        .select-wrap::after{content:"▾";position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#94a3b8;pointer-events:none;font-size:0.85rem;}
+        .submit-btn{width:100%;padding:14px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:28px;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .submit-btn:hover{background:#15803d;transform:translateY(-1px);}
+        .submit-btn:disabled{background:#86efac;cursor:not-allowed;transform:none;}
+        .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;display:none;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+
+        /* SIDEBAR */
+        .sidebar{display:flex;flex-direction:column;gap:20px;}
+
+        /* RESULT CARD */
+        .result-card{background:#fff;border-radius:20px;padding:32px;border:1px solid #e2e8f0;box-shadow:0 4px 20px rgba(0,0,0,0.04);text-align:center;display:none;}
+        .result-card.show{display:block;animation:fadeIn 0.4s ease;}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+        .result-card .result-icon{font-size:2.5rem;margin-bottom:12px;}
+        .result-card .result-label{font-size:0.82rem;font-weight:600;color:#94a3b8;text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;}
+        .result-card .result-amount{font-size:2.4rem;font-weight:800;color:#16a34a;margin-bottom:6px;}
+        .result-card .result-unit{font-size:0.85rem;color:#94a3b8;}
+        .result-card .result-divider{border:none;border-top:1px solid #f1f5f9;margin:18px 0;}
+        .result-card .result-note{font-size:0.8rem;color:#94a3b8;line-height:1.5;}
+
+        /* INFO CARD */
+        .info-card{background:#fff;border-radius:20px;padding:28px;border:1px solid #e2e8f0;}
+        .info-card h4{font-size:0.9rem;font-weight:700;color:#0f172a;margin-bottom:16px;}
+        .info-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;font-size:0.83rem;color:#64748b;line-height:1.5;}
+        .info-item .dot{width:8px;height:8px;background:#16a34a;border-radius:50%;flex-shrink:0;margin-top:5px;}
+
+        /* ERROR */
+        .msg{padding:12px 16px;border-radius:10px;font-size:0.88rem;font-weight:500;display:none;align-items:center;gap:8px;margin-top:16px;}
+        .msg.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;display:flex;}
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" href="/"><span>🏥</span> MedInsure AI</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+        <a href="/predict" class="active">Predict</a>
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="page-header">
+        <h1>🤖 Insurance Cost Predictor</h1>
+        <p>Fill in your personal and health details to get an estimated annual insurance charge.</p>
+    </div>
+
+    <div class="predict-layout">
+        <div class="form-card">
+            <h3>📋 Enter Your Details</h3>
+            <form id="predictForm">
+                <div class="grid2">
+                    <div class="field">
+                        <label>Age (years)</label>
+                        <input type="number" name="age" placeholder="e.g. 30" min="1" max="120" required>
+                    </div>
+                    <div class="field">
+                        <label>BMI</label>
+                        <input type="number" name="bmi" placeholder="e.g. 24.5" step="0.1" min="10" required>
+                    </div>
+                    <div class="field">
+                        <label>Number of Children</label>
+                        <input type="number" name="children" placeholder="e.g. 2" min="0" max="10" required>
+                    </div>
+                    <div class="field">
+                        <label>Gender</label>
+                        <div class="select-wrap">
+                            <select name="gender" required>
+                                <option value="" disabled selected>Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Smoker</label>
+                        <div class="select-wrap">
+                            <select name="smoker" required>
+                                <option value="" disabled selected>Yes / No</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Region</label>
+                        <div class="select-wrap">
+                            <select name="region" required>
+                                <option value="" disabled selected>Select region</option>
+                                <option value="northeast">Northeast</option>
+                                <option value="northwest">Northwest</option>
+                                <option value="southeast">Southeast</option>
+                                <option value="southwest">Southwest</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    <span id="btnText">⚡ Predict My Charges</span>
+                    <div class="spinner" id="spinner"></div>
+                </button>
+            </form>
+            <div class="msg" id="msg"></div>
+        </div>
+
+        <div class="sidebar">
+            <div class="result-card" id="resultCard">
+                <div class="result-icon">💰</div>
+                <div class="result-label">Estimated Annual Charges</div>
+                <div class="result-amount" id="chargeAmount">--</div>
+                <div class="result-unit">USD per year</div>
+                <hr class="result-divider">
+                <div class="result-note">This is an ML-based estimate. Actual charges may vary based on your insurance provider.</div>
+            </div>
+
+            <div class="info-card">
+                <h4>ℹ️ How charges are calculated</h4>
+                <div class="info-item"><div class="dot"></div><span>Age significantly impacts premium costs</span></div>
+                <div class="info-item"><div class="dot"></div><span>Smokers typically pay 3–4x more</span></div>
+                <div class="info-item"><div class="dot"></div><span>Higher BMI increases health risk</span></div>
+                <div class="info-item"><div class="dot"></div><span>Region affects base insurance rates</span></div>
+                <div class="info-item"><div class="dot"></div><span>More dependents raise overall costs</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("predictForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        const btnText = document.getElementById("btnText");
+        const spinner = document.getElementById("spinner");
+        const msg = document.getElementById("msg");
+        const resultCard = document.getElementById("resultCard");
+        const token = localStorage.getItem("access_token");
+
+        if (!token) {
+            msg.style.display = "flex";
+            msg.className = "msg error";
+            msg.textContent = "⚠️ You must login first. Redirecting...";
+            setTimeout(() => window.location.href = "/login", 1500);
+            return;
+        }
+
+        btn.disabled = true;
+        btnText.textContent = "Predicting...";
+        spinner.style.display = "block";
+        msg.style.display = "none";
+        resultCard.classList.remove("show");
+
+        const res = await fetch("/predict", {
+            method: "POST",
+            headers: {"Authorization": "Bearer " + token},
+            body: new FormData(e.target)
+        });
+
+        btn.disabled = false;
+        btnText.textContent = "⚡ Predict My Charges";
+        spinner.style.display = "none";
+
+        if (res.status === 401) {
+            msg.style.display = "flex";
+            msg.className = "msg error";
+            msg.textContent = "⚠️ Session expired. Please login again.";
+            setTimeout(() => window.location.href = "/login", 1500);
+            return;
+        }
+
+        const data = await res.json();
+        document.getElementById("chargeAmount").textContent = "$ " + parseFloat(data.predicted_charges).toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+        resultCard.classList.add("show");
+    });
+
+    function logout() {
+        localStorage.removeItem("access_token");
+        window.location.href = "/login";
+    }
+</script>
+</body>
+</html>

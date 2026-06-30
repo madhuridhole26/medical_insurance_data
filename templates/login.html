@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login — MedInsure AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+        body{background:#f0fdf4;color:#1e293b;min-height:100vh;}
+        body::before{
+            content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+            background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2316a34a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events:none;z-index:0;
+        }
+        body > *{position:relative;z-index:1;}
+
+        nav{display:flex;justify-content:space-between;align-items:center;padding:0 60px;height:68px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #d1fae5;position:sticky;top:0;z-index:100;}
+        .nav-brand{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:700;color:#16a34a;text-decoration:none;}
+        .nav-links{display:flex;align-items:center;gap:8px;}
+        .nav-links a{padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;color:#64748b;transition:all 0.2s;}
+        .nav-links a:hover{background:#f0fdf4;color:#16a34a;}
+        .nav-links .active{color:#16a34a;background:#f0fdf4;}
+
+        .page{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 68px);padding:40px 20px;}
+        .login-wrap{display:grid;grid-template-columns:320px 460px;background:#fff;border-radius:24px;border:1px solid #d1fae5;box-shadow:0 8px 40px rgba(22,163,74,0.1);overflow:hidden;}
+
+        .login-left{background:linear-gradient(160deg,#16a34a,#166534);padding:52px 36px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;}
+        .login-left .svg-wrap{width:150px;height:150px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;border:3px solid rgba(255,255,255,0.3);}
+        .login-left h2{font-size:1.6rem;font-weight:800;margin-bottom:10px;line-height:1.2;}
+        .login-left p{font-size:0.88rem;opacity:0.85;line-height:1.7;}
+        .token-badge{margin-top:24px;background:rgba(255,255,255,0.15);border-radius:12px;padding:14px 16px;font-size:0.8rem;border:1px solid rgba(255,255,255,0.25);text-align:left;width:100%;}
+        .token-badge strong{display:block;margin-bottom:4px;font-size:0.85rem;}
+
+        .login-right{padding:52px 44px;display:flex;flex-direction:column;justify-content:center;}
+        .login-right h3{font-size:1.6rem;font-weight:800;color:#0f172a;margin-bottom:6px;}
+        .login-right .sub{font-size:0.9rem;color:#94a3b8;margin-bottom:36px;}
+        .field{margin-bottom:22px;}
+        label{display:block;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:7px;}
+        .input-wrap{position:relative;}
+        .input-wrap .icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:1rem;pointer-events:none;}
+        input{width:100%;padding:11px 14px 11px 38px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.93rem;color:#1e293b;outline:none;transition:border 0.2s;}
+        input:focus{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,0.1);}
+        .submit-btn{width:100%;padding:13px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;}
+        .submit-btn:hover{background:#15803d;transform:translateY(-1px);}
+        .submit-btn:disabled{background:#86efac;cursor:not-allowed;transform:none;}
+        .msg{margin-top:16px;padding:12px 16px;border-radius:10px;font-size:0.88rem;font-weight:500;display:none;align-items:center;gap:8px;}
+        .msg.success{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;display:flex;}
+        .msg.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;display:flex;}
+        .footer-link{text-align:center;margin-top:24px;font-size:0.88rem;color:#94a3b8;}
+        .footer-link a{color:#16a34a;font-weight:600;text-decoration:none;}
+        .footer-link a:hover{text-decoration:underline;}
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" href="/">🏥 MedInsure AI</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/login" class="active">Login</a>
+        <a href="/predict">Predict</a>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="login-wrap">
+        <div class="login-left">
+            <div class="svg-wrap">
+                <!-- Stethoscope SVG -->
+                <svg width="90" height="90" viewBox="0 0 90 90" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Earpieces -->
+                    <circle cx="28" cy="18" r="6" fill="white" opacity="0.9"/>
+                    <circle cx="62" cy="18" r="6" fill="white" opacity="0.9"/>
+                    <!-- Tubes down -->
+                    <path d="M28 24 Q28 48 45 50 Q62 52 62 24" stroke="white" stroke-width="4" fill="none" stroke-linecap="round"/>
+                    <!-- Tube down to chest piece -->
+                    <line x1="45" y1="50" x2="45" y2="68" stroke="white" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Chest piece circle -->
+                    <circle cx="45" cy="76" r="10" fill="none" stroke="white" stroke-width="3.5"/>
+                    <circle cx="45" cy="76" r="4" fill="white" opacity="0.8"/>
+                </svg>
+            </div>
+            <h2>Welcome Back!</h2>
+            <p>Login to access your AI-powered insurance cost predictor.</p>
+            <div class="token-badge">
+                <strong>🛡️ Secure Sessions</strong>
+                Protected with JWT authentication tokens.
+            </div>
+        </div>
+        <div class="login-right">
+            <h3>Sign In</h3>
+            <p class="sub">Enter your credentials to continue.</p>
+            <form id="loginForm">
+                <div class="field">
+                    <label>Username</label>
+                    <div class="input-wrap">
+                        <span class="icon">👤</span>
+                        <input type="text" name="user_name" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Password</label>
+                    <div class="input-wrap">
+                        <span class="icon">🔑</span>
+                        <input type="password" name="password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Sign In</button>
+            </form>
+            <div class="msg" id="msg"></div>
+            <div class="footer-link">Don't have an account? <a href="/register">Register now</a></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        const msg = document.getElementById("msg");
+        btn.disabled = true; btn.textContent = "Signing in...";
+        const res = await fetch("/login", {method:"POST", body: new FormData(e.target)});
+        const data = await res.json();
+        btn.disabled = false; btn.textContent = "Sign In";
+        msg.style.display = "flex";
+        if (data.status === "Success") {
+            localStorage.setItem("access_token", data.Access_token);
+            msg.className = "msg success";
+            msg.textContent = "✅ Login successful! Redirecting...";
+            setTimeout(() => window.location.href = "/predict", 1400);
+        } else {
+            msg.className = "msg error";
+            msg.textContent = "⚠️ " + data.message;
+        }
+    });
+</script>
+</body>
+</html>

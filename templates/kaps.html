@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedInsure AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+        body{background:#f0fdf4;color:#1e293b;}
+
+        /* BG PATTERN */
+        body::before{
+            content:'';
+            position:fixed;top:0;left:0;width:100%;height:100%;
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(22,163,74,0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(16,185,129,0.08) 0%, transparent 50%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2316a34a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            pointer-events:none;
+            z-index:0;
+        }
+        body > *{position:relative;z-index:1;}
+
+        /* NAV */
+        nav{display:flex;justify-content:space-between;align-items:center;padding:0 60px;height:68px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #d1fae5;position:sticky;top:0;z-index:100;}
+        .nav-brand{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:700;color:#16a34a;text-decoration:none;}
+        .nav-links{display:flex;align-items:center;gap:8px;}
+        .nav-links a{padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;color:#64748b;transition:all 0.2s;}
+        .nav-links a:hover{background:#f0fdf4;color:#16a34a;}
+        .nav-links .nav-cta{background:#16a34a;color:#fff;padding:8px 20px;}
+        .nav-links .nav-cta:hover{background:#15803d;color:#fff;}
+
+        /* HERO */
+        .hero{display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:60px;padding:80px 60px;max-width:1200px;margin:0 auto;}
+        .hero-text h1{font-size:3rem;font-weight:800;line-height:1.15;color:#0f172a;margin-bottom:20px;}
+        .hero-text h1 .highlight{color:#16a34a;}
+        .hero-text p{font-size:1.1rem;color:#64748b;line-height:1.7;margin-bottom:36px;}
+        .hero-buttons{display:flex;gap:14px;flex-wrap:wrap;}
+        .btn-green{background:#16a34a;color:#fff;padding:13px 28px;border-radius:10px;text-decoration:none;font-weight:600;font-size:0.95rem;transition:all 0.2s;box-shadow:0 4px 14px rgba(22,163,74,0.3);}
+        .btn-green:hover{background:#15803d;transform:translateY(-2px);}
+        .btn-white{background:#fff;color:#16a34a;padding:13px 28px;border-radius:10px;text-decoration:none;font-weight:600;font-size:0.95rem;border:2px solid #16a34a;transition:all 0.2s;}
+        .btn-white:hover{background:#f0fdf4;transform:translateY(-2px);}
+
+        /* SVG ILLUSTRATION WRAPPER */
+        .hero-illustration{display:flex;justify-content:center;align-items:center;}
+        .illus-bg{width:380px;height:380px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 60px rgba(22,163,74,0.2);}
+
+        /* STATS */
+        .stats{background:#fff;border-top:1px solid #d1fae5;border-bottom:1px solid #d1fae5;padding:36px 60px;}
+        .stats-inner{display:flex;justify-content:center;gap:80px;max-width:1200px;margin:0 auto;}
+        .stat{text-align:center;}
+        .stat .num{font-size:2rem;font-weight:800;color:#16a34a;}
+        .stat .lbl{font-size:0.85rem;color:#94a3b8;margin-top:4px;font-weight:500;}
+
+        /* HOW IT WORKS */
+        .section{padding:80px 60px;max-width:1200px;margin:0 auto;}
+        .section-title{text-align:center;font-size:1.9rem;font-weight:800;color:#0f172a;margin-bottom:10px;}
+        .section-sub{text-align:center;color:#64748b;margin-bottom:48px;font-size:1rem;}
+        .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;}
+        .step{background:#fff;border-radius:16px;padding:32px 28px;border:1px solid #d1fae5;text-align:center;transition:box-shadow 0.2s;}
+        .step:hover{box-shadow:0 8px 32px rgba(22,163,74,0.1);}
+        .step-icon{width:60px;height:60px;background:linear-gradient(135deg,#dcfce7,#bbf7d0);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;margin:0 auto 18px;}
+        .step h3{font-size:1.05rem;font-weight:700;color:#0f172a;margin-bottom:8px;}
+        .step p{font-size:0.88rem;color:#64748b;line-height:1.6;}
+        .step-num{display:inline-block;background:#16a34a;color:#fff;border-radius:50%;width:26px;height:26px;font-size:0.78rem;font-weight:700;line-height:26px;margin-bottom:14px;}
+
+        footer{background:#0f172a;color:#94a3b8;text-align:center;padding:28px;font-size:0.85rem;}
+        footer span{color:#16a34a;font-weight:600;}
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" href="/">🏥 MedInsure AI</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+        <a href="/predict" class="nav-cta">Predict Now</a>
+    </div>
+</nav>
+
+<div class="hero">
+    <div class="hero-text">
+        <h1>Predict Your <span class="highlight">Medical Insurance</span> Charges Instantly</h1>
+        <p>Enter a few personal details and let our AI model estimate your annual insurance costs — powered by machine learning.</p>
+        <div class="hero-buttons">
+            <a href="/register" class="btn-green">Get Started Free</a>
+            <a href="/login" class="btn-white">Login to Predict</a>
+        </div>
+    </div>
+    <div class="hero-illustration">
+        <div class="illus-bg">
+            <!-- Medical Insurance SVG Illustration -->
+            <svg width="260" height="260" viewBox="0 0 260 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Shield -->
+                <path d="M130 20L60 50V120C60 162 90 198 130 210C170 198 200 162 200 120V50L130 20Z" fill="#16a34a" opacity="0.15"/>
+                <path d="M130 30L68 57V120C68 158 95 191 130 202C165 191 192 158 192 120V57L130 30Z" fill="none" stroke="#16a34a" stroke-width="4"/>
+                <!-- Cross -->
+                <rect x="118" y="90" width="24" height="60" rx="6" fill="#16a34a"/>
+                <rect x="100" y="108" width="60" height="24" rx="6" fill="#16a34a"/>
+                <!-- Stethoscope bottom left -->
+                <circle cx="55" cy="195" r="18" fill="none" stroke="#059669" stroke-width="3"/>
+                <path d="M55 177 Q55 155 75 148 Q95 141 95 120" stroke="#059669" stroke-width="3" fill="none" stroke-linecap="round"/>
+                <circle cx="95" cy="116" r="6" fill="#059669"/>
+                <circle cx="88" cy="112" r="3" fill="#fff"/>
+                <!-- Pills top right -->
+                <rect x="185" y="40" width="40" height="18" rx="9" fill="#4ade80" opacity="0.8"/>
+                <line x1="205" y1="40" x2="205" y2="58" stroke="#16a34a" stroke-width="2"/>
+                <rect x="195" y="65" width="30" height="14" rx="7" fill="#86efac" opacity="0.8"/>
+                <line x1="210" y1="65" x2="210" y2="79" stroke="#16a34a" stroke-width="1.5"/>
+                <!-- Heartbeat line -->
+                <polyline points="30,230 50,230 60,210 75,250 90,215 105,230 130,230 145,230 155,215 165,245 175,220 185,230 230,230" stroke="#16a34a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+    </div>
+</div>
+
+<div class="stats">
+    <div class="stats-inner">
+        <div class="stat"><div class="num">99%</div><div class="lbl">Prediction Accuracy</div></div>
+        <div class="stat"><div class="num">5</div><div class="lbl">Input Parameters</div></div>
+        <div class="stat"><div class="num">&lt;1s</div><div class="lbl">Response Time</div></div>
+        <div class="stat"><div class="num">ML</div><div class="lbl">Powered Model</div></div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-title">How It Works</div>
+    <div class="section-sub">Three simple steps to get your insurance cost estimate</div>
+    <div class="steps">
+        <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-icon">📝</div>
+            <h3>Create Account</h3>
+            <p>Register with your basic details to get secure access to the prediction tool.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-icon">🔐</div>
+            <h3>Login Securely</h3>
+            <p>Authenticate with your credentials. We use JWT tokens for secure sessions.</p>
+        </div>
+        <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-icon">🤖</div>
+            <h3>Get Prediction</h3>
+            <p>Enter age, BMI, region and lifestyle data — get your estimated charges instantly.</p>
+        </div>
+    </div>
+</div>
+
+<footer>
+    Built with ❤️ by <span>Kapil Patil</span> &nbsp;·&nbsp; Data Science & Python Enthusiast
+</footer>
+
+</body>
+</html>

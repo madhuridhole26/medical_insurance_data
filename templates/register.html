@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register — MedInsure AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif;}
+        body{background:#f0fdf4;color:#1e293b;min-height:100vh;}
+        body::before{
+            content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+            background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%2316a34a' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E");
+            pointer-events:none;z-index:0;
+        }
+        body > *{position:relative;z-index:1;}
+
+        nav{display:flex;justify-content:space-between;align-items:center;padding:0 60px;height:68px;background:rgba(255,255,255,0.95);backdrop-filter:blur(10px);border-bottom:1px solid #d1fae5;position:sticky;top:0;z-index:100;}
+        .nav-brand{display:flex;align-items:center;gap:8px;font-size:1.25rem;font-weight:700;color:#16a34a;text-decoration:none;}
+        .nav-links{display:flex;align-items:center;gap:8px;}
+        .nav-links a{padding:8px 16px;border-radius:8px;text-decoration:none;font-size:0.9rem;font-weight:500;color:#64748b;transition:all 0.2s;}
+        .nav-links a:hover{background:#f0fdf4;color:#16a34a;}
+        .nav-links .active{color:#16a34a;background:#f0fdf4;}
+
+        .page{display:grid;grid-template-columns:420px 1fr;min-height:calc(100vh - 68px);}
+
+        .left-panel{background:linear-gradient(160deg,#16a34a,#15803d,#166534);display:flex;flex-direction:column;justify-content:center;align-items:center;padding:60px 40px;color:#fff;text-align:center;}
+        .left-panel .svg-wrap{width:180px;height:180px;background:rgba(255,255,255,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:28px;border:3px solid rgba(255,255,255,0.3);}
+        .left-panel h2{font-size:1.8rem;font-weight:800;margin-bottom:12px;line-height:1.2;}
+        .left-panel p{font-size:0.95rem;opacity:0.85;line-height:1.7;margin-bottom:32px;}
+        .perks{display:flex;flex-direction:column;gap:14px;width:100%;}
+        .perk{display:flex;align-items:center;gap:12px;font-size:0.88rem;background:rgba(255,255,255,0.12);padding:12px 16px;border-radius:10px;text-align:left;}
+        .perk-icon{font-size:1.1rem;flex-shrink:0;}
+
+        .right-panel{display:flex;align-items:center;justify-content:center;padding:40px;}
+        .form-card{background:#fff;border-radius:20px;padding:44px;width:100%;max-width:480px;border:1px solid #d1fae5;box-shadow:0 4px 24px rgba(22,163,74,0.08);}
+        .form-card h3{font-size:1.6rem;font-weight:800;color:#0f172a;margin-bottom:6px;}
+        .form-card .sub{font-size:0.9rem;color:#94a3b8;margin-bottom:32px;}
+        .row2{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+        .field{margin-bottom:20px;}
+        label{display:block;font-size:0.82rem;font-weight:600;color:#374151;margin-bottom:6px;}
+        input{width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:10px;font-size:0.93rem;color:#1e293b;outline:none;transition:border 0.2s;background:#fff;}
+        input:focus{border-color:#16a34a;box-shadow:0 0 0 3px rgba(22,163,74,0.1);}
+        .submit-btn{width:100%;padding:13px;background:#16a34a;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;transition:all 0.2s;margin-top:4px;}
+        .submit-btn:hover{background:#15803d;transform:translateY(-1px);}
+        .submit-btn:disabled{background:#86efac;cursor:not-allowed;transform:none;}
+        .msg{margin-top:16px;padding:12px 16px;border-radius:10px;font-size:0.88rem;font-weight:500;display:none;align-items:center;gap:8px;}
+        .msg.success{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;display:flex;}
+        .msg.error{background:#fef2f2;color:#dc2626;border:1px solid #fecaca;display:flex;}
+        .footer-link{text-align:center;margin-top:24px;font-size:0.88rem;color:#94a3b8;}
+        .footer-link a{color:#16a34a;font-weight:600;text-decoration:none;}
+        .footer-link a:hover{text-decoration:underline;}
+    </style>
+</head>
+<body>
+
+<nav>
+    <a class="nav-brand" href="/">🏥 MedInsure AI</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/register" class="active">Register</a>
+        <a href="/login">Login</a>
+        <a href="/predict">Predict</a>
+    </div>
+</nav>
+
+<div class="page">
+    <div class="left-panel">
+        <div class="svg-wrap">
+            <!-- Medical clipboard / register SVG -->
+            <svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="20" y="15" width="60" height="75" rx="8" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="2.5"/>
+                <rect x="38" y="8" width="24" height="14" rx="5" fill="white" opacity="0.9"/>
+                <!-- Lines -->
+                <line x1="32" y1="38" x2="68" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="32" y1="50" x2="68" y2="50" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                <line x1="32" y1="62" x2="55" y2="62" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                <!-- Cross -->
+                <rect x="44" y="70" width="12" height="30" rx="4" fill="white" opacity="0.9"/>
+                <rect x="36" y="78" width="28" height="12" rx="4" fill="white" opacity="0.9"/>
+            </svg>
+        </div>
+        <h2>Join MedInsure AI</h2>
+        <p>Create your free account and start predicting insurance charges in seconds.</p>
+        <div class="perks">
+            <div class="perk"><span class="perk-icon">⚡</span><span>Instant ML-powered predictions</span></div>
+            <div class="perk"><span class="perk-icon">🔒</span><span>JWT secured & private sessions</span></div>
+            <div class="perk"><span class="perk-icon">📊</span><span>Accurate linear regression model</span></div>
+            <div class="perk"><span class="perk-icon">🆓</span><span>Completely free to use</span></div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="form-card">
+            <h3>Create Account</h3>
+            <p class="sub">Fill in your details to get started.</p>
+            <form id="registerForm">
+                <div class="row2">
+                    <div class="field">
+                        <label>Username</label>
+                        <input type="text" name="user_name" placeholder="e.g. kapil123" required>
+                    </div>
+                    <div class="field">
+                        <label>Password</label>
+                        <input type="password" name="password" placeholder="••••••••" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label>Email Address</label>
+                    <input type="email" name="email_id" placeholder="you@example.com" required>
+                </div>
+                <div class="row2">
+                    <div class="field">
+                        <label>Contact Number</label>
+                        <input type="text" name="contact_no" placeholder="+91 XXXXX XXXXX" required>
+                    </div>
+                    <div class="field">
+                        <label>Date of Birth</label>
+                        <input type="date" name="dob" required>
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Create Account</button>
+            </form>
+            <div class="msg" id="msg"></div>
+            <div class="footer-link">Already have an account? <a href="/login">Sign in</a></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("registerForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const btn = document.getElementById("submitBtn");
+        const msg = document.getElementById("msg");
+        btn.disabled = true; btn.textContent = "Registering...";
+        const res = await fetch("/register", {method:"POST", body: new FormData(e.target)});
+        const data = await res.json();
+        btn.disabled = false; btn.textContent = "Create Account";
+        msg.style.display = "flex";
+        if (data.message === "user registered successfully") {
+            msg.className = "msg success";
+            msg.textContent = "✅ Account created! Redirecting to login...";
+            setTimeout(() => window.location.href = "/login", 1600);
+        } else {
+            msg.className = "msg error";
+            msg.textContent = "⚠️ " + data.message;
+        }
+    });
+</script>
+</body>
+</html>
